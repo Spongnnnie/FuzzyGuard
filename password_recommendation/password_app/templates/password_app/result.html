@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Recommendation Result</title>
+    <link rel="stylesheet" href="{% static 'password_app/style.css' %}">
+</head>
+<body>
+    <h1>Your Recommended Password</h1>
+    <p><strong>Password:</strong> {{ password }}</p>
+    <p><strong>Strength:</strong> {{ strength }}</p>
+    <a href="{% url 'index' %}">Generate Another Password</a>
+
+    <div id="strength_feedback"></div>
+        <!-- Google Form Feedback Link -->
+        <p>We value your feedback! Please let us know how we did:</p>
+        <a href="https://forms.gle/1YHkLUFkPNuY78yw8" target="_blank">Give Feedback</a>
+</body>
+</html>

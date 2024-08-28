@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Recommendation</title>
+    <link rel="stylesheet" href="{% static 'password_app/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Password Recommender</h1>
+        <form method="post" class="form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Generate Password</button>
+        </form>
+
+        <h1>Password Strength Meter</h1>
+        <form id="password-strength-form">
+            {% csrf_token %}
+            <label for="password">Enter your password:</label>
+            <input type="password" id="password" name="password">
+            <button type="submit">Check Password Strength</button>
+        </form>
+
+        <p id="strength-result"></p>
+
+        <p>We value your feedback! Please let us know how we did:</p>
+        <a href="https://forms.gle/1YHkLUFkPNuY78yw8" target="_blank">Give Feedback</a>
+    </div>
+    
+    
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('password-strength-form');
+            const resultElement = document.getElementById('strength-result');
+    
+            // Function to get the CSRF token from cookies
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+    
+            const csrftoken = getCookie('csrftoken');
+    
+            // Handle form submission
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
+    
+                const password = document.getElementById('password').value;
+    
+                // Send the password to the server for strength evaluation
+                fetch('/check_password_strength/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ password: password })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Display the password strength result
+                    resultElement.textContent = 'Password strength: ' + data.strength;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+    </script>
+    
+    
+</body>
+</html>
